@@ -1,6 +1,3 @@
-// MÓDULO 1 — Estoque
-// Responsabilidade: guardar e atualizar o estado do inventário
-
 const InventoryManager = (() => {
   const stock = {
     inferior: 400,
@@ -19,8 +16,14 @@ const InventoryManager = (() => {
   return { getStock, hasStock, deduct };
 })();
 
-// MÓDULO 2 — DOM
-// Responsabilidade: ler e escrever elementos da interface
+/*
+Responsável por controlar o estoque.
+stock: objeto que guarda a quantidade de ingressos disponíveis em cada setor (inferior, superior, pista).
+getStock(type): devolve o número atual de ingressos de um tipo específico.
+hasStock(type, qty): verifica se há ingressos suficientes para a quantidade pedida.
+deduct(type, qty): subtrai do estoque a quantidade comprada.
+👉 Esse módulo é como o "banco de dados" do estoque.
+*/
 
 const DOMController = (() => {
   const elements = {
@@ -57,8 +60,16 @@ const DOMController = (() => {
   };
 })();
 
-// MÓDULO 3 — Validação
-// Responsabilidade: garantir que os dados de entrada são válidos
+/*
+Responsável por conversar com a interface (HTML).
+elements: guarda referências aos elementos da página (inputs e spans).
+getSelectedType(): lê qual tipo de ingresso o usuário escolheu.
+getQuantity(): lê e converte para número a quantidade digitada.
+clearQuantity(): limpa o campo de quantidade depois da compra.
+updateStockDisplay(type, value): atualiza na tela o número de ingressos restantes.
+showAlert(message): mostra uma mensagem de alerta para o usuário.
+👉 Esse módulo é como o "tradutor" entre o código e o que aparece na tela.
+*/
 
 const Validator = (() => {
   const isValidQuantity = (qty) => !isNaN(qty) && qty >= 1 && qty <= 25;
@@ -79,8 +90,13 @@ const Validator = (() => {
   return { validate };
 })();
 
-// MÓDULO 4 — Serviço de compra
-// Responsabilidade: orquestrar a lógica de negócio da compra
+/*
+Responsável por validar os dados de entrada.
+isValidQuantity(qty): garante que a quantidade seja um número entre 1 e 25.
+isValidType(type): garante que o tipo de ingresso seja válido (inferior, superior, pista).
+validate(type, qty): combina as duas verificações e retorna se está tudo certo ou uma mensagem de erro.
+👉 Esse módulo é como o "porteiro" que só deixa passar dados corretos.
+*/
 
 const PurchaseService = (() => {
   const execute = (type, qty) => {
@@ -109,11 +125,26 @@ const PurchaseService = (() => {
   return { execute };
 })();
 
-// MÓDULO 5 — Inicialização / Ponto de entrada
-// Responsabilidade: expor o ponto de entrada chamado pelo HTML
+/*
+Responsável por executar a compra.
+execute(type, qty):
+Valida os dados com o Validator.
+Verifica se há estoque suficiente com o InventoryManager.
+Se não houver, mostra alerta com a quantidade disponível.
+Se houver, desconta do estoque, atualiza a tela e mostra mensagem de sucesso.
+👉 Esse módulo é o "cérebro" da operação: decide o que acontece na compra.
+*/
 
 function buy() {
   const type = DOMController.getSelectedType();
   const qty = DOMController.getQuantity();
   PurchaseService.execute(type, qty);
 }
+
+/*
+Responsável por ser o ponto de entrada chamado pelo HTML.
+buy():
+Lê o tipo e a quantidade escolhida pelo usuário via DOMController.
+Chama o PurchaseService para executar a compra.
+👉 Esse é o "botão de ligar": conecta tudo e faz o sistema funcionar quando o usuário interage.
+*/
